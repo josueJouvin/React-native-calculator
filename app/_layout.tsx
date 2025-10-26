@@ -1,24 +1,30 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { globalStyles } from '@/styles/global-styles'
+import { useFonts } from 'expo-font'
+import * as NavigationBar from 'expo-navigation-bar'
+import { Slot } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { Platform, View } from 'react-native'
+const isAndroid = Platform.OS === 'android';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+if (isAndroid) {
+  NavigationBar.setVisibilityAsync('hidden');
+}
+const RootLayout = () => {
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  })
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  if (!loaded) {
+    return null
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    <View style={globalStyles.Background}>
+      <Slot />
+      <StatusBar style="light" />
+    </View>
+  )
 }
+
+export default RootLayout
